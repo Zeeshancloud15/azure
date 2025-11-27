@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+        ACR_NAME = "zeeshan"
+        ACR_LOGIN_SERVER = "zeeshan.azurecr.io"
+        IMAGE_NAME = "app"
+        IMAGE_TAG = "latest"
+        GITHUB_REPO = "https://github.com/zeeshaan02/azure.git"
+    }
+
+    stages {
+        stage('Clone Code') {
+            steps {
+                git branch: 'main', url: "${GITHUB_REPO}"
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh """
+                docker build -t ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} .
+                """
+            }
+        }
+
+        stage('Login to Azure Container Registry') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'acr-cred',
+                        usernameVariable: 'ACR_USER',
+                        passwordVariable: 'ACR_PASS')]) {
+                    sh "docker login ${ACR_LOGIN_SERVER} -u $ACR_USER -p $ACR_PASS"
+                }
+            }
+        }
+
+        stage('Push Docker Image to ACR') {
+            steps {
+                sh "docker push ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}"
+            }
+        }
+
+        stage('Trigger App Service Pull (Optional)') {
+            steps {
+                echo "If App Service is set to auto-pull latest image from ACR, no CLI needed."
+                echo "Otherwise, you can use Azure CLI or leave manual UI pull."
+            }
+        }
+    }
+}
