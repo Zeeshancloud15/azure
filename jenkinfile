@@ -6,7 +6,7 @@ pipeline {
         ACR_LOGIN_SERVER = "zeeshanagency.azurecr.io"
         IMAGE_NAME = "app"
         IMAGE_TAG = "build-${BUILD_NUMBER}"       // Unique tag per build
-        GITHUB_REPO = "https://github.com/zeeshaan02/azure.git"
+        GITHUB_REPO = "https://github.com/Zeeshancloud15/azure.git"
         WEBAPP_NAME = "zeeshan-webapp"           // Replace with your Web App name
         RESOURCE_GROUP = "zeeshan-rg"            // Replace with your Resource Group
     }
